@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.forum.mapper.DiscussPostMapper">
+    <resultMap id="BaseResultMap" type="com.forum.entity.DiscussPost">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="content" jdbcType="LONGVARCHAR" property="content" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="comment_count" jdbcType="INTEGER" property="commentCount" />
+        <result column="score" jdbcType="DOUBLE" property="score" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
+    <!-- status = 2 是被拉黑的帖子 -->
+    <select id="selectDiscussPosts" resultMap="BaseResultMap" parameterType="integer">
+        select
+             <include refid="Base_Column_List" />
+        from
+            discuss_post
+        where
+            status != 2
+            <if test="userId != 0">
+                and user_id = #{userId}
+            </if>
+        order by
+            type desc,
+            create_time desc
+        limit
+            #{offset},
+            #{limit}
+    </select>
+    <select id="selectDiscussPostRows" resultType="integer" parameterType="integer">
+        select
+            count(id)
+        from
+            discuss_post
+        where
+            status != 2
+            <if test="userId != 0">
+                and user_id = #{userId}
+            </if>
+        order by
+            type desc,
+            create_time desc
+    </select>
+</mapper>

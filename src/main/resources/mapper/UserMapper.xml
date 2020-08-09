@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.forum.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.forum.entity.User">
+        <id property="id" column="id" jdbcType="INTEGER" />
+        <result property="username" column="username" jdbcType="VARCHAR" />
+        <result property="password" column="password" jdbcType="VARCHAR" />
+        <result property="salt" column="salt" jdbcType="VARCHAR" />
+        <result property="email" column="email" jdbcType="VARCHAR" />
+        <result property="type" column="type" jdbcType="INTEGER" />
+        <result property="status" column="status" jdbcType="INTEGER" />
+        <result property="activationCode" column="activation_code" jdbcType="VARCHAR" />
+        <result property="headerUrl" column="header_url" jdbcType="VARCHAR" />
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>
+
+    <select id="selectUserByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user
+        where id = #{id}
+    </select>
+    <select id="selectUserByUserName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user
+        where username = #{username}
+    </select>
+    <select id="selectUserByUserEmail" resultMap="BaseResultMap"> select
+        <include refid="Base_Column_List" />
+        from user
+        where email = #{email}
+    </select>
+
+
+    <insert id="insertUser" parameterType="com.forum.entity.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="salt != null">
+                salt,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="activationCode != null">
+                activation_code,
+            </if>
+            <if test="headerUrl != null">
+                header_url,
+            </if>
+            <if test="createTime != null">
+                create_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="salt != null">
+                #{salt,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="activationCode != null">
+                #{activationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="headerUrl != null">
+                #{headerUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateUserStatusByUserId" parameterType="com.forum.entity.User">
+        update user
+        <set>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateUserHeaderUrlByUserId" parameterType="com.forum.entity.User">
+        update user
+        <set>
+            <if test="headerUrl != null">
+                header_url = #{headerUrl,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateUserPasswordByUserId" parameterType="com.forum.entity.User">
+        update user
+        <set>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
