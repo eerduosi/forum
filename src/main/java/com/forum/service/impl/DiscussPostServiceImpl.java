@@ -10,16 +10,21 @@ import java.util.List;
 
 @Service(value = "discussPostServiceImpl")
 public class DiscussPostServiceImpl implements DiscussPostService {
+
     @Autowired
     private DiscussPostMapper discussPostMapper;
 
     @Override
     public List<DiscussPost> selectDiscussPosts(Integer userId, Integer offset, Integer limit) {
+
         return discussPostMapper.selectDiscussPosts(userId, offset, limit);
+
     }
 
     @Override
     public Integer selectDiscussPostRows(Integer userId) {
+
         return discussPostMapper.selectDiscussPostRows(userId);
+
     }
 }

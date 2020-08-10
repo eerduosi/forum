@@ -32,19 +32,32 @@ public class HomeController {
      */
     @GetMapping(value = "/index")
     public String getIndexPage(Model model, Page page){
+
         //SpringMVC 自动将 Page 注入到 Model
         page.setRows(discussPostService.selectDiscussPostRows(0));
+
         page.setPath("/index");
+
         List<DiscussPost> discussPostList = discussPostService.selectDiscussPosts(0, page.getOffset(), page.getLimit());
+
         List<Map<String, Object>> list = new ArrayList<>();
+
         for (DiscussPost discussPost : discussPostList) {
+
             Map<String, Object> map = new HashMap<>();
+
             map.put("discussPost", discussPost);
+
             User user = userService.selectUserByUserId(discussPost.getUserId());
+
             map.put("user", user);
+
             list.add(map);
+
         }
+
         model.addAttribute("list", list);
+
         return "index";
     }
 }

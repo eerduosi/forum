@@ -3,7 +3,19 @@ package com.forum.service;
 import com.forum.entity.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Map;
+
 public interface UserService {
+
+
+    /**
+     * 注册用户
+     * @param user
+     * @return
+     */
+    Map<String, Object> register(User user);
+
+
     /**
      * 依据 id 查找 user
      * @param id
