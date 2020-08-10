@@ -41,11 +41,11 @@ class ForumApplicationTests{
 
     }
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private DiscussPostMapper discussPostMapper;
+//    @Autowired
+//    private UserMapper userMapper;
+//
+//    @Autowired
+//    private DiscussPostMapper discussPostMapper;
 
 //    @Test
 //    void contextLoads() {

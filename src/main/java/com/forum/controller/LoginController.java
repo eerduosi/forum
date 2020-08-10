@@ -28,7 +28,7 @@ public class LoginController {
     }
 
     /**
-     * 用户注册控制
+     * 用户注册 handler 方法
      */
     @PostMapping(value = "/register")
     public String register(Model model, User user){
