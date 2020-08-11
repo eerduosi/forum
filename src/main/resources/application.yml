@@ -1,6 +1,6 @@
 spring:
   mail:
-    username: bxybug@qq.com
+    username:
     password:
     host: smtp.qq.com
     properties:

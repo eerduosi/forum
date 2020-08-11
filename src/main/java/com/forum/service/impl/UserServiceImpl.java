@@ -1,8 +1,11 @@
 package com.forum.service.impl;
 
+import com.forum.entity.LoginTicket;
 import com.forum.entity.User;
+import com.forum.mapper.LoginTicketMapper;
 import com.forum.mapper.UserMapper;
 import com.forum.service.UserService;
+import com.forum.util.ForumConstant;
 import com.forum.util.ForumUtil;
 import com.forum.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
@@ -18,10 +21,13 @@ import java.util.Map;
 import java.util.Random;
 
 @Service(value = "userServiceImpl")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
     
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     /**
      * 发邮件工具类
@@ -47,6 +53,14 @@ public class UserServiceImpl implements UserService {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    /**
+     * 注册时用户信息验证
+     *
+     * @param user
+     *
+     * @return
+     *
+     */
     @Override
     public Map<String, Object> register(User user){
 
@@ -101,7 +115,7 @@ public class UserServiceImpl implements UserService {
         }
 
         /**
-         * 注册用户
+         * 设置注册用户的信息
          */
         user.setSalt(ForumUtil.generateUUID().substring(0, 5));
 
@@ -139,7 +153,72 @@ public class UserServiceImpl implements UserService {
 
         return map;
     }
-    
+
+    /**
+     * 激活用户
+     *
+     * @param userId
+     *
+     * @param code
+     *
+     * @return
+     *
+     */
+    @Override
+    public Integer activation(Integer userId, String code) {
+
+        User user = userMapper.selectUserByUserId(userId);
+
+        /**
+         * 判断用户激活状态
+         */
+        if( user.getStatus().equals(ForumConstant.ACTIVATION_SUCCESS) ){
+
+            /**
+             * 用户已激活 , 返回重复激活信息
+             */
+            return ForumConstant.ACTIVATION_REPEATED;
+
+        }else if(user.getActivationCode().equals(code)){
+
+            Integer result = userMapper.updateUserStatusByUserId(userId, ForumConstant.ACTIVATION_SUCCESS);
+
+            if( result.equals(ForumConstant.ACTIVATION_SUCCESS) ){
+
+                /**
+                 * 更新激活状态成功 , 返回激活成功信息
+                 */
+                return ForumConstant.ACTIVATION_SUCCESS;
+
+            }else{
+                /**
+                 * 更新激活状态失败 , 返回激活失败信息
+                 */
+                return ForumConstant.ACTIVATION_FAILURE;
+
+            }
+
+
+        }else{
+
+            /**
+             * 其余情况 , 返回激活失败信息
+             */
+            return ForumConstant.ACTIVATION_FAILURE;
+
+        }
+
+    }
+
+    /**
+     *
+     * 依据 id 查找 user
+     *
+     * @param id
+     *
+     * @return
+     *
+     */
     @Override
     public User selectUserByUserId(Integer id) {
 
@@ -147,45 +226,108 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    /**
+     *
+     * 登录Service , 验证用户名, 密码
+     *
+     * @param username
+     *
+     * @param password
+     *
+     * @param expiredSeconds
+     *
+     * @return
+     *
+     */
     @Override
-    public User selectUserByUserName(String username) {
+    public Map<String, Object> login(String username, String password, Integer expiredSeconds) {
 
-        return userMapper.selectUserByUserName(username);
+        Map<String, Object> map = new HashMap<>();
 
+        /**
+         * 空值处理
+         */
+        if(StringUtils.isBlank(username)){
+
+            map.put("usernameMsg", "账号不能为空");
+
+            return map;
+
+        }
+
+        if(StringUtils.isBlank(password)){
+
+            map.put("passwordMsg", "密码不能为空");
+
+            return map;
+
+        }
+
+        /**
+         * 验证是否已注册
+         */
+        User user = userMapper.selectUserByUserName(username);
+
+        if(user == null){
+
+            map.put("usernameMsg", "该账号未注册");
+
+            return map;
+
+        }
+
+        if(!user.getStatus().equals(ForumConstant.ACTIVATION_SUCCESS)){
+
+            map.put("usernameMsg", "该账号未激活");
+
+            return map;
+
+        }
+
+        /**
+         * 验证密码是否正确
+         */
+        password = ForumUtil.md5(password + user.getSalt());
+
+        if(!user.getPassword().equals(password)){
+
+            map.put("passwordMsg", "密码不正确");
+
+            return map;
+
+        }
+
+        /**
+         * 创建登录凭证
+         */
+        LoginTicket loginTicket = new LoginTicket();
+
+        loginTicket.setUserId(user.getId());
+
+        loginTicket.setTicket(ForumUtil.generateUUID());
+
+        loginTicket.setStatus(ForumConstant.TICKET_LOGOUT);
+
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+
+        return map;
     }
 
+    /**
+     *
+     * 退出系统
+     *
+     * @param ticket
+     *
+     */
     @Override
-    public User selectUserByUserEmail(String email) {
+    public void logout(String ticket) {
 
-        return userMapper.selectUserByUserEmail(email);
-
-    }
-
-    @Override
-    public Integer insertUser(User user) {
-
-        return userMapper.insertUser(user);
-
-    }
-
-    @Override
-    public Integer updateUserStatusByUserId(Integer id, Integer status) {
-
-        return userMapper.updateUserStatusByUserId(id, status);
-
-    }
-
-    @Override
-    public Integer updateUserHeaderUrlByUserId(Integer id, String headerUrl) {
-
-        return userMapper.updateUserHeaderUrlByUserId(id, headerUrl);
-
-    }
-
-    @Override
-    public Integer updateUserPasswordByUserId(Integer id, String password) {
-
-        return userMapper.updateUserPasswordByUserId(id, password);
+        loginTicketMapper.updateStatus(ticket, ForumConstant.TICKET_LOGIN);
 
     }
 

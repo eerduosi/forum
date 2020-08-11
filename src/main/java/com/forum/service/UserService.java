@@ -10,61 +10,59 @@ public interface UserService {
 
     /**
      * 注册用户
+     *
      * @param user
+     *
      * @return
+     *
      */
     Map<String, Object> register(User user);
 
+    /**
+     *
+     * 激活用户
+     *
+     * @param userId : id
+     *
+     * @param code : 激活码
+     *
+     * @return
+     *
+     */
+    Integer activation(Integer userId, String code);
+
 
     /**
+     *
      * 依据 id 查找 user
+     *
      * @param id
+     *
      * @return
+     *
      */
     User selectUserByUserId(Integer id);
 
     /**
-     * 依据 name 查找 user
-     * @param username
+     * 获取 username , password , expiredSeconds 进行登录
+     *
+     * @param username : 用户名
+     *
+     * @param password : 密码
+     *
+     * @param expiredSeconds : 过期时间
+     *
      * @return
+     *
      */
-    User selectUserByUserName(String username);
+    Map<String, Object> login(String username, String password, Integer expiredSeconds);
 
     /**
-     * 依据 email 查找 user
-     * @param email
-     * @return
+     *
+     * 获取当前用户 ticket 并退出登录
+     *
+     * @param ticket
+     *
      */
-    User selectUserByUserEmail(String email);
-
-    /**
-     * 新增 user
-     * @param user
-     * @return
-     */
-    Integer insertUser(User user);
-
-    /**
-     * 依据 user 的 id 更新 user 的 status
-     * @param id
-     * @param status
-     * @return
-     */
-    Integer updateUserStatusByUserId(@Param(value = "id") Integer id, @Param(value = "status") Integer status);
-
-    /**
-     * 依据 user 的 id 更新 user 的 headerUrl
-     * @param id
-     * @param headerUrl
-     * @return
-     */
-    Integer updateUserHeaderUrlByUserId(@Param(value = "id")Integer id, @Param(value = "headerUrl")String headerUrl);
-
-    /**
-     * 依据 user 的 id 更新 user 的 password
-     * @param id
-     * @param password
-     * @return
-     */
-    Integer updateUserPasswordByUserId(@Param(value = "id")Integer id, @Param(value = "password")String password);
+    void logout(String ticket);
 }

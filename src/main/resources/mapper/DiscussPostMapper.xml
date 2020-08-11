@@ -33,6 +33,8 @@
             #{offset},
             #{limit}
     </select>
+
+    <!-- userId = 0 是查询所有帖子 -->
     <select id="selectDiscussPostRows" resultType="integer" parameterType="integer">
         select
             count(id)
