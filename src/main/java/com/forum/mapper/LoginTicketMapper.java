@@ -20,7 +20,7 @@ public interface LoginTicketMapper {
     /**
      * 查询登录凭证
      */
-    @Select("select id, userId, ticket, status, expired from login_ticket where ticket = #{ticket} ")
+    @Select("select id, user_id, ticket, status, expired from login_ticket where ticket = #{ticket} ")
     LoginTicket selectByTicket(String ticket);
 
     /**

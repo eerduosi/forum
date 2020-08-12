@@ -331,4 +331,14 @@ public class UserServiceImpl implements UserService{
 
     }
 
+    /**
+     * 查询登录凭证
+     */
+    @Override
+    public LoginTicket findLoginTicket(String ticket){
+
+        return loginTicketMapper.selectByTicket(ticket);
+
+    }
+
 }

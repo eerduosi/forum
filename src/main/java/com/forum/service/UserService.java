@@ -1,5 +1,6 @@
 package com.forum.service;
 
+import com.forum.entity.LoginTicket;
 import com.forum.entity.User;
 import org.apache.ibatis.annotations.Param;
 
@@ -65,4 +66,14 @@ public interface UserService {
      *
      */
     void logout(String ticket);
+
+    /**
+     * 查询登录凭证
+     *
+     * @param ticket : 登录凭证
+     *
+     * @return
+     *
+     */
+    LoginTicket findLoginTicket(String ticket);
 }

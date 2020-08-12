@@ -30,7 +30,7 @@ public class HomeController {
      * @param page
      * @return
      */
-    @GetMapping(value = "/index")
+    @GetMapping(path = {"/index", "/"})
     public String getIndexPage(Model model, Page page){
 
         //SpringMVC 自动将 Page 注入到 Model
