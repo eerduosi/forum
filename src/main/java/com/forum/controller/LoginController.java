@@ -168,7 +168,7 @@ public class LoginController {
 
         } catch (IOException e) {
 
-            logger.error("相应验证码失败 : " + e.getMessage());
+            logger.error("响应验证码失败 : " + e.getMessage());
 
         }
 

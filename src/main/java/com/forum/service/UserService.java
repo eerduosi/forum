@@ -76,4 +76,17 @@ public interface UserService {
      *
      */
     LoginTicket findLoginTicket(String ticket);
+
+    /**
+     *
+     * 更新用户头像
+     *
+     * @param userId
+     *
+     * @param headerUrl
+     *
+     * @return
+     *
+     */
+    Integer updateHeaderUrl(Integer userId, String headerUrl);
 }

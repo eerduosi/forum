@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService{
     /**
      * 域名
      */
-    @Value("${forum.key.domain}")
+    @Value("${forum.path.domain}")
     private String domain;
 
     /**
@@ -341,4 +341,21 @@ public class UserServiceImpl implements UserService{
 
     }
 
+    /**
+     *
+     * 更新用户头像
+     *
+     * @param userId
+     *
+     * @param headerUrl
+     *
+     * @return
+     *
+     */
+    @Override
+    public Integer updateHeaderUrl(Integer userId, String headerUrl) {
+
+        return userMapper.updateUserHeaderUrlByUserId(userId, headerUrl);
+
+    }
 }
