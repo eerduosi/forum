@@ -1,5 +1,6 @@
 package com.forum.controller;
 
+import com.forum.annotation.LoginRequired;
 import com.forum.entity.User;
 import com.forum.service.UserService;
 import com.forum.util.ForumUtil;
@@ -59,6 +60,7 @@ public class UserController {
      * @return
      *
      */
+    @LoginRequired
     @GetMapping(value = "/setting")
     public String getSettingPage(){
 
@@ -77,6 +79,7 @@ public class UserController {
      * @return
      *
      */
+    @LoginRequired
     @PostMapping(value = "/upload")
     public String upload(MultipartFile headerImage, Model model){
 
@@ -150,6 +153,15 @@ public class UserController {
         return "redirect:/index";
     }
 
+    /**
+     *
+     * 获取图片
+     *
+     * @param fileName
+     *
+     * @param response
+     *
+     */
     @GetMapping(value = "/header/{fileName}")
     public void getHeader(@PathVariable(value = "fileName")String fileName, HttpServletResponse response){
 

@@ -5,6 +5,7 @@ import com.forum.entity.User;
 import com.forum.mapper.DiscussPostMapper;
 import com.forum.mapper.UserMapper;
 import com.forum.util.MailClient;
+import com.forum.util.SensitiveFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,29 +18,44 @@ import org.thymeleaf.context.Context;
 //导入 main 包的配置类 , 以 ForumApplication.class 为配置类
 @ContextConfiguration(classes = ForumApplication.class)
 //implements 得到spring容器
-class ForumApplicationTests{
+class ForumApplicationTests {
 
     @Autowired
-    private TemplateEngine templateEngine;
-
-    @Autowired
-    private MailClient mailClient;
-
+    private SensitiveFilter sensitiveFilter;
 
     @Test
     void contextLoads() {
 
-        Context context = new Context();
+        String text = "*赌_博* , *嫖_娼 , *吃饭* , *吸毒* , *吃饭*";
 
-        context.setVariable("username", "bxybug");
+        text = sensitiveFilter.filter(text);
 
-        String content = templateEngine.process("mail/demo", context);
-
-        System.out.println(content);
-
-        mailClient.sendMail("bxybug@qq.com", "HTML", content);
+        System.out.println(text);
 
     }
+
+
+//    @Autowired
+//    private TemplateEngine templateEngine;
+//
+//    @Autowired
+//    private MailClient mailClient;
+//
+//
+//    @Test
+//    void contextLoads() {
+//
+//        Context context = new Context();
+//
+//        context.setVariable("username", "bxybug");
+//
+//        String content = templateEngine.process("mail/demo", context);
+//
+//        System.out.println(content);
+//
+//        mailClient.sendMail("bxybug@qq.com", "HTML", content);
+//
+//    }
 
 //    @Autowired
 //    private UserMapper userMapper;
