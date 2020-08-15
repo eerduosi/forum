@@ -33,4 +33,24 @@ public interface DiscussPostMapper {
      */
     Integer selectDiscussPostRows(@Param(value = "userId")Integer userId);
 
+    /**
+     *
+     * 增加帖子
+     *
+     * @param discussPost
+     *
+     * @return
+     */
+    Integer insertDiscussPost(DiscussPost discussPost);
+
+    /**
+     * 查找帖子
+     *
+     * @param id : discussPost id
+     *
+     * @return
+     *
+     */
+    DiscussPost selectDiscussPostById(Integer id);
+
 }

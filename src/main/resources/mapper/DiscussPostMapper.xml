@@ -15,6 +15,67 @@
     <sql id="Base_Column_List">
         id, user_id, title, content, type, status, create_time, comment_count, score
     </sql>
+    <insert id="insertDiscussPost" parameterType="com.forum.entity.DiscussPost">
+        insert into discuss_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="commentCount != null">
+                comment_count,
+            </if>
+            <if test="score != null">
+                score,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="commentCount != null">
+                #{commentCount,jdbcType=VARCHAR},
+            </if>
+            <if test="score != null">
+                #{score,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
     <!-- status = 2 是被拉黑的帖子 -->
     <select id="selectDiscussPosts" resultMap="BaseResultMap" parameterType="integer">
         select
@@ -48,5 +109,13 @@
         order by
             type desc,
             create_time desc
+    </select>
+
+    <!-- 依据帖子id查询帖子实体 -->
+    <select id="selectDiscussPostById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from discuss_post
+        where id = #{id}
     </select>
 </mapper>

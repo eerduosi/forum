@@ -28,4 +28,13 @@ public interface DiscussPostService {
      * @return
      */
     Integer selectDiscussPostRows(@Param(value = "userId")Integer userId);
+
+    /**
+     * 增加帖子
+     *
+     * @param discussPost
+     *
+     * @return
+     */
+    public Integer addDiscussPost(DiscussPost discussPost);
 }
