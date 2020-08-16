@@ -46,7 +46,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 /**
                  * 依据登录凭证查询 user
                  */
-                User user = userService.selectUserByUserId(loginTicket.getUserId());
+                User user = userService.findUserByUserId(loginTicket.getUserId());
 
                 /**
                  * 在本次请求中持有 user

@@ -42,7 +42,7 @@ public interface UserService {
      * @return
      *
      */
-    User selectUserByUserId(Integer id);
+    User findUserByUserId(Integer id);
 
     /**
      * 获取 username , password , expiredSeconds 进行登录

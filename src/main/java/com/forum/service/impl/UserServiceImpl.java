@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService{
      *
      */
     @Override
-    public User selectUserByUserId(Integer id) {
+    public User findUserByUserId(Integer id) {
 
         return userMapper.selectUserByUserId(id);
 

@@ -48,7 +48,7 @@ public class HomeController {
 
             map.put("discussPost", discussPost);
 
-            User user = userService.selectUserByUserId(discussPost.getUserId());
+            User user = userService.findUserByUserId(discussPost.getUserId());
 
             map.put("user", user);
 
