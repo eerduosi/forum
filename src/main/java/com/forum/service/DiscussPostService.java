@@ -47,4 +47,16 @@ public interface DiscussPostService {
      *
      */
     DiscussPost findDiscussPostById(Integer id);
+
+    /**
+     * 更新comment_count数量
+     *
+     * @param id
+     *
+     * @param commentCount
+     *
+     * @return
+     *
+     */
+    Integer updateCommentCount(Integer id, Integer commentCount);
 }

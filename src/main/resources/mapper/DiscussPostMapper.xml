@@ -76,6 +76,15 @@
             </if>
         </trim>
     </insert>
+    <update id="updateCommentCount" parameterType="com.forum.entity.DiscussPost">
+        update discuss_post
+        <set>
+            <if test="commentCount != null">
+                comment_count = #{commentCount,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
     <!-- status = 2 是被拉黑的帖子 -->
     <select id="selectDiscussPosts" resultMap="BaseResultMap" parameterType="integer">
         select

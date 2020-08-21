@@ -32,7 +32,7 @@ public class Comment {
     private Integer entityId;
 
     /**
-     * 被回复评论的评论 id
+     * 被回复评论的评论的 id, 如果没有则默认为 0
      */
     private Integer targetId;
 

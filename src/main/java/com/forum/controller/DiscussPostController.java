@@ -150,7 +150,7 @@ public class DiscussPostController {
 
                 }
 
-                commentVo.put("replyList", replyVoList);
+                commentVo.put("replys", replyVoList);
 
                 /**
                  * 回复的数量

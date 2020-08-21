@@ -44,7 +44,7 @@ public interface ForumConstant {
     Integer ENTITY_TYPE_POST = 1;
 
     /**
-     * 实体类型 : 帖子
+     * 实体类型 : 评论
      */
     Integer ENTITY_TYPE_COMMENT = 2;
 }

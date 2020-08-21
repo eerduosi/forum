@@ -33,4 +33,13 @@ public interface CommentService {
      */
     Integer findCommentCount(Integer entityType, Integer entityId);
 
+    /**
+     * 增加评论
+     *
+     * @param comment : 评论实体
+     *
+     * @return
+     */
+    Integer addComment(Comment comment);
+
 }

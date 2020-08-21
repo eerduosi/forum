@@ -28,4 +28,14 @@ public interface CommentMapper {
      */
     Integer selectCountByEntity(Integer entityType, Integer entityId);
 
+    /**
+     * 添加评论
+     *
+     * @param comment
+     *
+     * @return
+     *
+     */
+    Integer insertComment(Comment comment);
+
 }
