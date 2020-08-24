@@ -58,5 +58,21 @@ public interface MessageService {
      * @return
      */
     Integer findLetterUnreadCount(Integer userId,String conversationId);
+
+    /**
+     * 新增消息
+     *
+     * @param message
+     */
+    Integer addMessage(Message message);
+
+    /**
+     * 修改消息的状态
+     *
+     * @param ids
+     *
+     * @return
+     */
+    Integer readMessage(List<Integer> ids);
     
 }

@@ -358,4 +358,18 @@ public class UserServiceImpl implements UserService{
         return userMapper.updateUserHeaderUrlByUserId(userId, headerUrl);
 
     }
+
+    /**
+     * 依据用户名查用户
+     *
+     * @param username
+     *
+     * @return
+     */
+    @Override
+    public User findUserByName(String username) {
+
+        return userMapper.selectUserByUserName(username);
+
+    }
 }

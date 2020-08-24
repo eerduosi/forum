@@ -89,4 +89,13 @@ public interface UserService {
      *
      */
     Integer updateHeaderUrl(Integer userId, String headerUrl);
+
+    /**
+     * 依据用户名查用户
+     *
+     * @param username
+     *
+     * @return
+     */
+    User findUserByName(String username);
 }
