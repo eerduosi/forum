@@ -60,4 +60,11 @@ public class HomeController {
 
         return "index";
     }
+
+    @GetMapping(value = "/error")
+    public String getErrorPage(){
+
+        return "/error/500";
+
+    }
 }
