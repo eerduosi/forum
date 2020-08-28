@@ -50,7 +50,6 @@ spring:
         # 忽略过滤格式
         exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico"
 
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true

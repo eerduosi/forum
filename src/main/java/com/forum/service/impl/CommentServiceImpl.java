@@ -27,16 +27,46 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private DiscussPostService discussPostService;
 
+    /**
+     * 查询评论
+     *
+     * @param entityType : 被回复目标类型
+     *
+     * @param entityId   : 被回复目标类型 id
+     *
+     * @param offset     : 从第 offset 条数据开始
+     *
+     * @param limit      : 共获取 limit 条数据
+     *
+     * @return
+     *
+     */
     @Override
     public List<Comment> findCommentsByEntity(Integer entityType, Integer entityId, Integer offset, Integer limit) {
         return commentMapper.selectCommentByEntity(entityType, entityId, offset, limit);
     }
 
+    /**
+     * 获取评论的数量
+     *
+     * @param entityType : 被回复目标类型
+     *
+     * @param entityId   : 被回复目标类型 id
+     *
+     * @return
+     */
     @Override
     public Integer findCommentCount(Integer entityType, Integer entityId) {
         return commentMapper.selectCountByEntity(entityType, entityId);
     }
 
+    /**
+     * 增加评论
+     *
+     * @param comment : 评论实体
+     *
+     * @return
+     */
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     @Override
     public Integer addComment(Comment comment) {

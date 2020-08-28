@@ -6,6 +6,7 @@ import com.forum.entity.Page;
 import com.forum.entity.User;
 import com.forum.service.CommentService;
 import com.forum.service.DiscussPostService;
+import com.forum.service.LikeService;
 import com.forum.service.UserService;
 import com.forum.util.ForumConstant;
 import com.forum.util.ForumUtil;
@@ -25,34 +26,55 @@ public class DiscussPostController {
 
     private static final Logger logger = LoggerFactory.getLogger(DiscussPostController.class);
 
-    @Autowired
     private DiscussPostService discussPostService;
 
-    @Autowired
     private HostHolder hostHolder;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private CommentService commentService;
+
+    private LikeService likeService;
+
+    @Autowired
+    public void setDiscussPostService(DiscussPostService discussPostService) {
+        this.discussPostService = discussPostService;
+    }
+
+    @Autowired
+    public void setHostHolder(HostHolder hostHolder) {
+        this.hostHolder = hostHolder;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setCommentService(CommentService commentService) {
+        this.commentService = commentService;
+    }
+
+    @Autowired
+    public void setLikeService(LikeService likeService) {
+        this.likeService = likeService;
+    }
 
     /**
      * 增加帖子
      *
      * @param title
-     *
      * @param content
-     *
      * @return
      */
     @PostMapping(value = "/add")
     @ResponseBody
-    public String addDiscussPost(String title, String content){
+    public String addDiscussPost(String title, String content) {
 
         User user = hostHolder.getUser();
 
-        if(user == null){
+        if (user == null) {
 
             return ForumUtil.getJSONString(403, "您还未登录");
 
@@ -78,21 +100,27 @@ public class DiscussPostController {
      * 查询帖子
      *
      * @param discussPostId
-     *
      * @param model
-     *
      * @return
      */
     @GetMapping(value = "/detail/{discussPostId}")
-    public String getDiscussPost(@PathVariable(value = "discussPostId")Integer discussPostId, Model model, Page page){
+    public String getDiscussPost(@PathVariable(value = "discussPostId") Integer discussPostId, Model model, Page page) {
 
+        //帖子信息
         DiscussPost discussPost = discussPostService.findDiscussPostById(discussPostId);
-
         model.addAttribute("discussPost", discussPost);
 
+        //作者信息
         User user = userService.findUserByUserId(discussPost.getUserId());
-
         model.addAttribute("user", user);
+
+        //帖子点赞信息
+        Long likeCount = likeService.findEntityLikeCount(ForumConstant.ENTITY_TYPE_POST, discussPostId);
+        model.addAttribute("likeCount", likeCount);
+
+        //帖子点赞状态
+        Integer likeStatus = hostHolder.getUser() == null ? 0 : likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ForumConstant.ENTITY_TYPE_POST, discussPostId);
+        model.addAttribute("likeStatus", likeStatus);
 
         page.setLimit(5);
 
@@ -110,19 +138,28 @@ public class DiscussPostController {
          */
         List<Map<String, Object>> commentVoList = new ArrayList<>();
 
-        if(commentList != null){
+        if (commentList != null) {
 
             for (Comment comment : commentList) {
 
+                //评论VO
                 Map<String, Object> commentVo = new HashMap<>();
 
+                //评论
                 commentVo.put("comment", comment);
 
+                //作者
                 commentVo.put("user", userService.findUserByUserId(comment.getUserId()));
 
-                /**
-                 * 评论的回复
-                 */
+                //评论点赞信息
+                likeCount = likeService.findEntityLikeCount(ForumConstant.ENTITY_TYPE_COMMENT, comment.getId());
+                commentVo.put("likeCount", likeCount);
+
+                //评论点赞状态
+                likeStatus = hostHolder.getUser() == null ? 0 : likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ForumConstant.ENTITY_TYPE_COMMENT, comment.getId());
+                commentVo.put("likeStatus", likeStatus);
+
+                //评论的回复
                 List<Comment> replyList = commentService.findCommentsByEntity(ForumConstant.ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
 
                 /**
@@ -130,19 +167,30 @@ public class DiscussPostController {
                  */
                 List<Map<String, Object>> replyVoList = new ArrayList<>();
 
-                if(replyList != null){
+                if (replyList != null) {
 
                     for (Comment reply : replyList) {
 
+                        //回复VO
                         Map<String, Object> replyVo = new HashMap<>();
 
+                        //回复
                         replyVo.put("reply", reply);
 
+                        //作者
                         replyVo.put("user", userService.findUserByUserId(reply.getUserId()));
 
+                        //回复目标
                         User target = reply.getTargetId() == 0 ? null : userService.findUserByUserId(reply.getTargetId());
-
                         replyVo.put("target", target);
+
+                        //回复点赞信息
+                        likeCount = likeService.findEntityLikeCount(ForumConstant.ENTITY_TYPE_POST, reply.getId());
+                        replyVo.put("likeCount", likeCount);
+
+                        //回复点赞状态
+                        likeStatus = hostHolder.getUser() == null ? 0 : likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ForumConstant.ENTITY_TYPE_POST, reply.getId());
+                        replyVo.put("likeStatus", likeStatus);
 
                         replyVoList.add(replyVo);
 

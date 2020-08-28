@@ -2,6 +2,7 @@ package com.forum.controller;
 
 import com.forum.annotation.LoginRequired;
 import com.forum.entity.User;
+import com.forum.service.LikeService;
 import com.forum.service.UserService;
 import com.forum.util.ForumUtil;
 import com.forum.util.HostHolder;
@@ -48,11 +49,26 @@ public class UserController {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private HostHolder hostHolder;
+
+    private LikeService likeService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setHostHolder(HostHolder hostHolder) {
+        this.hostHolder = hostHolder;
+    }
+
+    @Autowired
+    public void setLikeService(LikeService likeService) {
+        this.likeService = likeService;
+    }
 
     /**
      * 跳转到账号设置页面
@@ -198,6 +214,26 @@ public class UserController {
             logger.error("读取头像失败 : ", e.getMessage());
 
         }
+
+    }
+
+    @GetMapping(value = "/profile/{userId}")
+    public String getProfilePage(@PathVariable(value = "userId")Integer userId, Model model){
+        User user = userService.findUserByUserId(userId);
+
+        if(user == null){
+            throw new RuntimeException("该用户不存在");
+        }
+
+        //用户
+        model.addAttribute("user", user);
+
+        //点赞数量
+        Integer userLikeCount = likeService.findUserLikeCount(userId);
+
+        model.addAttribute("likeCount", userLikeCount);
+
+        return "site/profile";
 
     }
 

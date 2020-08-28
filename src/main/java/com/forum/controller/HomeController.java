@@ -4,7 +4,10 @@ import com.forum.entity.DiscussPost;
 import com.forum.entity.Page;
 import com.forum.entity.User;
 import com.forum.service.DiscussPostService;
+import com.forum.service.LikeService;
 import com.forum.service.UserService;
+import com.forum.util.ForumConstant;
+import com.forum.util.ForumUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +21,26 @@ import java.util.Map;
 @Controller
 public class HomeController {
 
-    @Autowired
     private DiscussPostService discussPostService;
 
-    @Autowired
     private UserService userService;
+
+    private LikeService likeService;
+
+    @Autowired
+    public void setDiscussPostService(DiscussPostService discussPostService) {
+        this.discussPostService = discussPostService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setLikeService(LikeService likeService) {
+        this.likeService = likeService;
+    }
 
     /**
      * 显示 index 首页
@@ -51,6 +69,10 @@ public class HomeController {
             User user = userService.findUserByUserId(discussPost.getUserId());
 
             map.put("user", user);
+
+            Long likeCount = likeService.findEntityLikeCount(ForumConstant.ENTITY_TYPE_POST, discussPost.getId());
+
+            map.put("likeCount", likeCount);
 
             list.add(map);
 
