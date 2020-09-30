@@ -6,9 +6,14 @@ import com.forum.mapper.DiscussPostMapper;
 import com.forum.mapper.UserMapper;
 import com.forum.util.MailClient;
 import com.forum.util.SensitiveFilter;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.test.context.ContextConfiguration;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -21,18 +26,33 @@ import org.thymeleaf.context.Context;
 class ForumApplicationTests {
 
     @Autowired
-    private SensitiveFilter sensitiveFilter;
+    private KafkaProducer kafkaProducer;
 
     @Test
-    void contextLoads() {
+    public void testKafka() throws InterruptedException {
 
-        String text = "*赌_博* , *嫖_娼 , *吃饭* , *吸毒* , *吃饭*";
+        kafkaProducer.sendMessage("1", "你好");
+        kafkaProducer.sendMessage("2", "nice to meet you");
 
-        text = sensitiveFilter.filter(text);
+        Thread.sleep(1000 * 10);
 
-        System.out.println(text);
+
 
     }
+
+//    @Autowired
+//    private SensitiveFilter sensitiveFilter;
+//
+//    @Test
+//    void contextLoads() {
+//
+//        String text = "*赌_博* , *嫖_娼 , *吃饭* , *吸毒* , *吃饭*";
+//
+//        text = sensitiveFilter.filter(text);
+//
+//        System.out.println(text);
+//
+//    }
 
 
 //    @Autowired
@@ -91,4 +111,25 @@ class ForumApplicationTests {
 //        System.out.println(format);
 //    }
 
+}
+
+@Component
+class KafkaProducer{
+    private KafkaTemplate kafkaTemplate;
+    @Autowired
+    public void setKafkaTemplate(KafkaTemplate kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    public void sendMessage(String topic, String content){
+        kafkaTemplate.send(topic, content);
+    }
+}
+
+@Component
+class KafkaConsumer{
+    @KafkaListener(topics = {"test"})
+    public void handleMessage(ConsumerRecord record){
+        System.out.println(record.value());
+    }
 }

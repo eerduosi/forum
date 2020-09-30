@@ -1,4 +1,6 @@
 spring:
+
+  #Mail
   mail:
     username:
     password:
@@ -8,8 +10,12 @@ spring:
         smtp:
           ssl:
             enable: true
+
+  #Thymeleaf
   thymeleaf:
     cache: false
+
+  #Datasource
   datasource:
     url: jdbc:mysql://localhost:3306/forum?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -49,7 +55,15 @@ spring:
         url-pattern: /*
         # 忽略过滤格式
         exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico"
+  #KafkaProperties
+  kafka:
+    bootstrap-servers: localhost:80
+    consumer:
+      group-id: forum-consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 3000
 
+#Mybatis
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -57,6 +71,7 @@ mybatis:
   mapper-locations: classpath:/mapper/**.xml
   type-aliases-package: com.forum.entity
 
+#logger
 logging:
   level:
     com.forum: debug

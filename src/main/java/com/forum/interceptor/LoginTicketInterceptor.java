@@ -17,11 +17,19 @@ import java.util.Date;
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setHostHolder(HostHolder hostHolder) {
+        this.hostHolder = hostHolder;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

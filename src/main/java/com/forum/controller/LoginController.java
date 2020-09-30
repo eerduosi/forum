@@ -3,12 +3,15 @@ package com.forum.controller;
 import com.forum.entity.User;
 import com.forum.service.UserService;
 import com.forum.util.ForumConstant;
+import com.forum.util.ForumUtil;
+import com.forum.util.RedisKeyUtil;
 import com.google.code.kaptcha.Producer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +25,33 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private Producer kaptchaProducer;
+
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setKaptchaProducer(Producer kaptchaProducer) {
+        this.kaptchaProducer = kaptchaProducer;
+    }
+
+    @Autowired
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -150,13 +169,22 @@ public class LoginController {
          */
         BufferedImage image = kaptchaProducer.createImage(text);
 
-        /**
-         * 把验证码字符串存入 session
-         */
-        session.setAttribute("kaptcha", text);
+//        /**
+//         * 把验证码字符串存入 session
+//         */
+//        session.setAttribute("kaptcha", text);
+
+        //把验证码存到redis中
+        String kaptchaOwner = ForumUtil.generateUUID();
+        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner );
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);
 
         /**
-         * 设置响应类型
+         * 将图片传给浏览器
          */
         response.setContentType("image/png");
 
@@ -188,7 +216,7 @@ public class LoginController {
      *
      * @param model : Model
      *
-     * @param session : session
+//     * @param session : session
      *
      * @param response : response
      *
@@ -196,12 +224,26 @@ public class LoginController {
      *
      */
     @PostMapping(value = "/login")
-    public String login(@RequestParam(value = "username") String username, @RequestParam(value = "password")String password, @RequestParam(value = "verifyCode")String verifyCode, @RequestParam(value = "rememberMe", required = false)boolean rememberMe, Model model, HttpSession session, HttpServletResponse response){
+    public String login(@RequestParam(value = "username") String username,
+                        @RequestParam(value = "password")String password,
+                        @RequestParam(value = "verifyCode")String verifyCode,
+                        @RequestParam(value = "rememberMe", required = false)boolean rememberMe,
+                        Model model,
+//                        HttpSession session,
+                        HttpServletResponse response,
+                        @CookieValue("kaptchaOwner")String kaptchaOwner){
 
-        /**
-         * 获取 sesion 中的验证码
-         */
-        String kaptcha = (String) session.getAttribute("kaptcha");
+//        /**
+//         * 获取 sesion 中的验证码
+//         */
+//        String kaptcha = (String) session.getAttribute("kaptcha");
+
+        //获取redis中的kaptcha
+        String kaptcha = null;
+        if(StringUtils.isNotBlank(kaptchaOwner)){
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+        }
 
         /**
          * 检查验证码

@@ -86,7 +86,7 @@ public class HomeController {
     @GetMapping(value = "/error")
     public String getErrorPage(){
 
-        return "/error/500";
+        return "error/400";
 
     }
 }

@@ -47,4 +47,9 @@ public interface ForumConstant {
      * 实体类型 : 评论
      */
     Integer ENTITY_TYPE_COMMENT = 2;
+
+    /**
+     * 实体类型 : 评论
+     */
+    Integer ENTITY_TYPE_USER = 3;
 }
